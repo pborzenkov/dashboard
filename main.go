@@ -89,6 +89,7 @@ func listServices(client *api.Client) {
 		if err != nil {
 			log.Printf("catalog.Services: %v", err)
 			time.Sleep(15 * time.Second)
+			continue
 		}
 
 		for svc, tags := range svcs {
