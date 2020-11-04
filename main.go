@@ -92,6 +92,7 @@ func listServices(client *api.Client) {
 			continue
 		}
 
+		validServices := make(map[string]struct{})
 		for svc, tags := range svcs {
 			name, addr := extractTags(tags)
 			if name == "" || addr == "" {
@@ -105,12 +106,14 @@ func listServices(client *api.Client) {
 			services[svc].Name = name
 			services[svc].Address = addr
 			servicesMu.Unlock()
+
+			validServices[svc] = struct{}{}
 		}
 
 		servicesMu.Lock()
-		for name := range services {
-			if _, ok := svcs[name]; !ok {
-				delete(services, name)
+		for svc := range services {
+			if _, ok := validServices[svc]; !ok {
+				delete(services, svc)
 			}
 		}
 		servicesMu.Unlock()
